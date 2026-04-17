@@ -84,10 +84,7 @@ Use those when you have weighted point clouds and need discrete solvers. Use
 NeuralOT.jl when you have sample access to continuous distributions and need
 a parameterised map or potential that generalises beyond the training points.
 
-## Citing
 
-If you use this package in academic work, please cite both the JOSS paper (see
-[`paper/paper.md`](paper/paper.md)) and the underlying method papers.
 
 ## License
 
