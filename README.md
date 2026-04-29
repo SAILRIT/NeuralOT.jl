@@ -9,7 +9,7 @@ and transport-based generative models using neural networks.
 
 NeuralOT.jl fills a gap in the Julia OT ecosystem: while
 [OptimalTransport.jl](https://github.com/JuliaOptimalTransport/OptimalTransport.jl)
-provides excellent discrete-measure solvers (Sinkhorn, exact LP, unbalanced
+provides discrete-measure solvers (Sinkhorn, exact LP, unbalanced
 OT), there is no Julia package dedicated to *neural* OT — continuous methods
 that scale to high dimensions by parameterising potentials or maps as neural
 networks. This package implements three established families:
