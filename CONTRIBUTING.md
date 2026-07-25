@@ -1,41 +1,32 @@
 # Contributing to NeuralOT.jl
 
-Thanks for your interest! Contributions of all kinds are welcome: bug
-reports, documentation fixes, new examples, and new algorithms.
+Thanks for considering a contribution.
 
-## Reporting bugs
+## Getting started
 
-Open a GitHub issue with:
+```julia
+julia --project=.
+julia> using Pkg; Pkg.instantiate(); Pkg.test()
+```
 
-- A minimal working example that reproduces the problem
-- Julia version (`versioninfo()`) and `Pkg.status()` output
-- What you expected vs. what happened
+## Guidelines
 
-## Proposing changes
+- Every new solver or metric needs a test that checks it against something
+  independently known to be true: a closed-form result (see `src/gaussian.jl`),
+  an exact discrete solver, or a finite-difference check. Tests that only
+  assert "the code ran" are not enough.
+- Keep everything differentiable by Zygote: no array mutation inside anything
+  that ends up under `Flux.gradient`. Build results functionally
+  (`vcat`, broadcasting, `reduce`) rather than pre-allocating and writing.
+- Public functions need a docstring with an `# Arguments` or
+  `# Keyword arguments` section and, where useful, an `# Example`.
+- Run the test suite before opening a pull request. If you add an exported
+  name, add it to `docs/src/api.md`.
 
-1. Fork and branch off `main`.
-2. For non-trivial changes, open an issue first to discuss scope.
-3. Run the tests locally: `julia --project -e 'using Pkg; Pkg.test()'`.
-4. Add tests covering new behaviour.
-5. Format code with consistent 4-space indents (no trailing whitespace).
-6. Update docstrings and, if relevant, the docs under `docs/src/`.
-7. Submit a PR describing the change and linking any related issue.
+## Numerical conventions
 
-## Adding a new algorithm
-
-The package is structured so each method lives in its own file under
-`src/`, exports a single solver function returning a `NeuralOTResult`,
-and dispatches through `monge_map` for inference. To add a new method:
-
-1. Create `src/your_method.jl` implementing `your_solver(...)` that
-   returns `NeuralOTResult(models, losses, :your_method, config)`.
-2. Add `include("your_method.jl")` to `src/NeuralOT.jl` and export the
-   solver.
-3. Add a branch to `monge_map` if your method defines a transport map.
-4. Add a test in `test/runtests.jl`.
-5. Add a docs page in `docs/src/methods/`.
-
-## Code of conduct
-
-Be kind. This project follows the
-[Julia Community Standards](https://julialang.org/community/standards/).
+- Data is stored **column-major**: a batch of `n` points in `d` dimensions is a
+  `d x n` matrix. This matches Flux and keeps samples contiguous.
+- Internally everything is `Float32`. Inputs are converted on entry.
+- Costs are *not* halved: `SqEuclidean` is `||x - y||^2`, so the entropic map
+  for that cost is `x - grad_u(x) / 2`.
